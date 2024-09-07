@@ -1,7 +1,8 @@
 {
-  "name": "cli-for-mongodb-mission-5-phase-1",
+  "name": "cli-for-mongodb",
   "version": "1.0.0",
   "main": "index.js",
+    "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,5 +13,8 @@
   "dependencies": {
     "commander": "^12.1.0",
     "inquirer": "^10.2.1"
+  },
+  "bin": {
+    "mongo-cli": "index.js"
   }
 }
