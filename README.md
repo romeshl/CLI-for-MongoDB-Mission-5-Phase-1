@@ -33,6 +33,7 @@ After playing a bit with [readline](https://www.npmjs.com/package/readline0), [c
 
 **Listing_transactions.js** - This file contains all the CRUD operations for Listings collection. It imports ListingsCollection.js file and exports all the functions to CLI.js.
 
+**trademe.listings.json** - This file contains the seed data to be added to an empty database.
 
 
 ## Instructions
