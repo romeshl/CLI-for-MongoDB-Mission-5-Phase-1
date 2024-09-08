@@ -48,8 +48,9 @@ const detectEscAndExit = () => {
   });
 };
 
+
+// Main function to run the CLI
 const runCLI = async () => {
-  // Main function to run the CLI
 
   let keepRunning = true; // Variable to keep the CLI running
 
@@ -86,22 +87,32 @@ const runCLI = async () => {
     // checks if user selected add data and prompts the user for data
     if (removeColor(command) === "Add listing") {
       const answers = await inquirer.prompt(questions);
-      console.log("\n"); // Add a new line for spacing
       const addedListing = await Add_Listing(answers); // Add data to the listing
+      if (!addedListing) {
+        // If the listing is not added, display an error message
+        console.log(chalk.redBright("\nUnable to add listing. Error occurred!\n"));
+        continue; // Skip adding the listing
+      }
+      console.log("\n"); // Add a new line for spacing
       console.log(addedListing); // Display the added listing data
       console.log("\n"); // Add a new line for spacing
       console.log(chalk.yellowBright("Listing added successfully!\n")); // Display success message
     }
 
-    // checks if seed data has already been added once
+    // checks if user selected add seed data and adds the seed data to the listings
     if (removeColor(command) === "Add seed data") {
-      if (Seed_Data_Added) {
+      if (Seed_Data_Added) { // checks if seed data has already been added once
         console.log(
           chalk.yellowBright("\nSeed data has already been added.\n\n")
         );
         continue; // Skip adding seed data
       }
       const addedListing = await Add_Seed_Data(Seed_Data); // Add data to the listing
+      if (addedListing===null) {
+        // If the listing is not added, display an error message
+        console.log(chalk.redBright("\nUnable to add seed data. Error occurred!\n"));
+        continue; // Skip adding the seed data
+      }
       console.log("\n"); // Add a new line for spacing
       console.log(addedListing); // Display the added listing data
       console.log("\n"); // Add a new line for spacing
@@ -134,6 +145,13 @@ const runCLI = async () => {
     if (removeColor(command) === "Show listings") {
       console.log("\n"); // Add a new line for spacing
       const showListings = await Show_Listings(); // Grabs all the listings from the collection
+      if (showListings===null) {
+        // If the listings are not found, display an error message
+        console.log(
+          chalk.redBright("\nUnable to find listing data. Error occurred!\n")
+        );
+        continue; // Skip showing the listings
+      }
       console.log(showListings); // Display all the listings
       console.log("\n"); // Add a new line for spacing
       console.log(chalk.yellowBright("No. of listings: "), showListings.length); // Display the number of listings  in the collection
@@ -164,9 +182,11 @@ const runCLI = async () => {
       const answers = await inquirer.prompt(questions); // Prompt the user for the updated data
 
       const updatedListing = await Update_Listing(id, answers); // Update the listing
-      if (!updatedListing) {
+      if (updatedListing===null) {
         // If the listing is not found, display an error message
-        console.log(chalk.redBright("\nListing not found.\n"));
+        console.log(
+          chalk.redBright("\nUnable to update the listing. Error occurred!\n")
+        );
         continue; // Skip updating the listing
       }
       console.log("\n"); // Add a new line for spacing
@@ -215,8 +235,15 @@ const runCLI = async () => {
         );
         continue;
       }
-      console.log("\n"); // Add a new line for spacing
       const deletedListings = await Delete_All_Listings(); // Delete all the listings
+      if (deletedListings===null) {
+        // If the listings are not found, display an error message
+        console.log(
+          chalk.redBright("\nUnable to delete all listings. Error occurred!\n")
+        );
+        continue; // Skip deleting all the listings
+      }
+      console.log("\n"); // Add a new line for spacing
       console.log(deletedListings); // Display the deleted listings data
       console.log("\n"); // Add a new line for spacing
       Seed_Data_Added = false; // Reset the seed data added
