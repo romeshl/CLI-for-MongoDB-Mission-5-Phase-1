@@ -1,0 +1,48 @@
+[{
+  "title": "Wonderboom",
+  "description": "Bluetooth Speaker",
+  "start_price": 10,
+  "reserve_price": 50
+},
+{
+  "title": "Fujifilm Digital Camera X-H2s",
+  "description": "Digital Mirrorless camera. 10500 shots. As new.",
+  "start_price": 100,
+  "reserve_price": 1500
+},
+{
+  "title": "Viltrox 13mm f1.4",
+  "description": "Camera lens for fujifilm x-mount cameras.",
+  "start_price": 100,
+  "reserve_price": 450
+},
+{
+  "title": "DJI Mic1, 2TX and 1RX",
+  "description": "Dji wireless mic kit for digital video cameras.",
+  "start_price": 50,
+  "reserve_price": 300
+},
+{
+  "title": "Godox QR-P90 softbox",
+  "description": "Godox light modifier for bowens mount",
+  "start_price": 20,
+  "reserve_price": 150
+},
+{
+  "title": "Canon M6 Mark II",
+  "description": "Digital mirrorless camera for sale. Used but in great condition.",
+  "start_price": 100,
+  "reserve_price": 1500
+},
+{
+  "title": "Tamron 35mm f1.4",
+  "description": "Tamron EF lens for Canon. Great condition.",
+  "start_price": 100,
+  "reserve_price": 1200
+},
+{
+  "title": "Ttartisans 27mm f2.8",
+  "description": "Fujifilm X-mount lens. As new.",
+  "start_price": 20,
+  "reserve_price": 150
+}]
