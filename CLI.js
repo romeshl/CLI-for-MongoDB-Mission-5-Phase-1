@@ -10,7 +10,9 @@ import {
   Update_Listing,
   Delete_Listing,
   Delete_All_Listings,
-} from "./Listing_transactions.js"; // Import the functions to perform CRUD operations on the listings
+} from "./DB_Operations/Listing_transactions.js"; // Import the functions to perform CRUD operations on the listings
+
+import { options, questions } from "./Components/Inquirer_prompts.js"; // Import the inquirer prompts for the CLI
 
 import { readFile } from "fs/promises"; // Import the fs package to read files
 const Seed_Data = JSON.parse(
@@ -46,75 +48,6 @@ const detectEscAndExit = () => {
   });
 };
 
-const options = [
-  // Main menu options for the CLI
-  {
-    type: "list",
-    name: "command",
-    message: chalk.bold(chalk.greenBright("Choose an option:\n")), // Main menu
-    choices: [
-      chalk.blueBright("Add listing"), // Adds a new listing
-      chalk.blueBright("Add seed data"), // Adds seed data to the listings
-      chalk.yellowBright("Show listing"), // Shows all listings
-      chalk.yellowBright("Show listings"), // Shows all listings
-      chalk.greenBright("Update listing"), // Updates a listing
-      chalk.magentaBright("Delete listing"), // Deletes a listing
-      chalk.magentaBright("Delete all listings"), // Deletes all listings
-      chalk.redBright("Exit"), // Exits the CLI to the terminal
-    ],
-  },
-];
-
-const questions = [
-  // data to be added to the listings
-  {
-    type: "input", // inquirer input type
-    name: "title", // name of the input
-    message: "Enter the title of the listing item: ", // prompt message
-    filter: (value) => {
-      return value.trim(); // Remove whitespace
-    },
-  },
-  {
-    type: "input",
-    name: "description",
-    message: "Enter the description of the listing item: ",
-    filter: (value) => {
-      return value.trim(); // Remove whitespace
-    },
-  },
-  {
-    type: "input",
-    name: "start_price",
-    message: "Enter the start price of the listing: ",
-    validate: function (value) {
-      // Validate the input to check if it is a number and greater than 0
-      if (isNaN(value) || parseInt(value) < 1 || value === "") {
-        return "Please enter a valid number.";
-      }
-      return true;
-    },
-    filter: function (value) {
-      return parseFloat(value); // Convert input to float
-    },
-  },
-  {
-    type: "input",
-    name: "reserve_price",
-    message: "Enter the reserve price of the listing: ",
-    validate: function (value) {
-      // Validate the input to check if it is a number and greater than 0
-      if (isNaN(value) || value < 0 || value === "") {
-        return "Please enter a valid number.";
-      }
-      return true;
-    },
-    filter: function (value) {
-      return parseFloat(value); // Convert input to float
-    },
-  },
-];
-
 const runCLI = async () => {
   // Main function to run the CLI
 
@@ -143,6 +76,11 @@ const runCLI = async () => {
       console.log(chalk.red("\n\n\nGoodbye!\n\n\n"));
       db.connection.close(); // Close the MongoDB connection
       keepRunning = false; // Stop the loop and exit the CLI
+    }
+
+    if (removeColor(command) === "Clear Screen") {
+      console.clear(); // Clear the terminal screen
+      continue; // Skip the rest of the loop
     }
 
     // checks if user selected add data and prompts the user for data
@@ -181,7 +119,6 @@ const runCLI = async () => {
           return value.trim(); // Remove whitespace
         },
       });
-      console.log("\n"); // Add a new line for spacing
       const showListing = await Show_Listing(id); // Show the listing
       if (!showListing) {
         // If the listing is not found, display an error message
@@ -235,14 +172,12 @@ const runCLI = async () => {
       console.log("\n"); // Add a new line for spacing
       console.log(updatedListing); // Display the updated listing data
       console.log("\n"); // Add a new line for spacing
-      console.log(
-        chalk.yellowBright("Above listing updated successfully!\n")
-      ); // Display success message
+      console.log(chalk.yellowBright("Above listing updated successfully!\n")); // Display success message
     }
 
     // checks if user selected delete listing and prompts the user for the listing id
     if (removeColor(command) === "Delete listing") {
-       const { id } = await inquirer.prompt({
+      const { id } = await inquirer.prompt({
         type: "input",
         name: "id",
         message: "Enter the ID of the listing item to delete: ",
@@ -250,7 +185,6 @@ const runCLI = async () => {
           return value.trim(); // Remove whitespace
         },
       });
-      console.log("\n"); // Add a new line for spacing
       const deletedListing = await Delete_Listing(id); // Delete the listing
       if (!deletedListing) {
         // If the listing is not found, display an error message
@@ -276,7 +210,9 @@ const runCLI = async () => {
       });
       if (!isConfirmed) {
         // If the user does not confirm, skip deleting all listings
-        console.log(chalk.yellowBright("\nDelete all listings, cancelled.\n\n"));
+        console.log(
+          chalk.yellowBright("\nDelete all listings, cancelled.\n\n")
+        );
         continue;
       }
       console.log("\n"); // Add a new line for spacing
