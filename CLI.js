@@ -63,8 +63,8 @@ const runCLI = async () => {
   }
 
   console.clear(); // Clear the console
-  console.log(chalk.yellowBright(chalk.bold("Welcome to the CLI!"))); // Welcome message
-  console.log(chalk.yellowBright(chalk.bold("===================\n")));
+  console.log(chalk.yellowBright(chalk.bold("Welcome Trademe listings data feeder CLI"))); // Welcome message
+  console.log(chalk.yellowBright(chalk.bold("========================================\n")));
   console.log(chalk.gray("Press 'ESC' to exit at any time.\n\n")); // Exit message
 
   while (keepRunning) {
