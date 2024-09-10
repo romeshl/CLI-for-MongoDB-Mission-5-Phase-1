@@ -48,6 +48,19 @@ const detectEscAndExit = () => {
   });
 };
 
+export function Show_Data(data, message) {
+  // Function to display the data from listing operations
+  console.log("\n");
+  console.log(data);
+  console.log("\n");
+  console.log(chalk.yellowBright(message));
+  console.log("\n");
+}
+
+export function Show_Error(error) {
+  // Function to display the error message from listing operations
+  console.log(chalk.redBright(`\n${error}\n`));
+}
 
 // Main function to run the CLI
 const runCLI = async () => {
@@ -87,16 +100,12 @@ const runCLI = async () => {
     // checks if user selected add data and prompts the user for data
     if (removeColor(command) === "Add listing") {
       const answers = await inquirer.prompt(questions);
-      const addedListing = await Add_Listing(answers); // Add data to the listing
-      if (!addedListing) {
-        // If the listing is not added, display an error message
-        console.log(chalk.redBright("\nUnable to add listing. Error occurred!\n"));
-        continue; // Skip adding the listing
+      try {
+        const added_data = await Add_Listing(answers); // Add listing
+        Show_Data(added_data, "Listing added successfully!");
+      } catch (error) {
+        Show_Error(`Unable to add listing. Error: ${error.message}`);
       }
-      console.log("\n"); // Add a new line for spacing
-      console.log(addedListing); // Display the added listing data
-      console.log("\n"); // Add a new line for spacing
-      console.log(chalk.yellowBright("Listing added successfully!\n")); // Display success message
     }
 
     // checks if user selected add seed data and adds the seed data to the listings
@@ -107,17 +116,15 @@ const runCLI = async () => {
         );
         continue; // Skip adding seed data
       }
-      const addedListing = await Add_Seed_Data(Seed_Data); // Add data to the listing
-      if (addedListing===null) {
-        // If the listing is not added, display an error message
-        console.log(chalk.redBright("\nUnable to add seed data. Error occurred!\n"));
-        continue; // Skip adding the seed data
+      try {
+        const seeded_data = await Add_Seed_Data(Seed_Data); // Add seed data
+        Show_Data(
+          seeded_data,
+          `Seed data added Successfully. No. of listings added: ${seeded_data.length}`
+        );
+      } catch (error) {
+        Show_Error(`Unable to add seed data. Error: ${error.message}`);
       }
-      console.log("\n"); // Add a new line for spacing
-      console.log(addedListing); // Display the added listing data
-      console.log("\n"); // Add a new line for spacing
-      console.log(chalk.yellowBright("Seed data added successfully!\n")); // Display success message
-      Seed_Data_Added = true; // Set the seed data added
     }
 
     // checks if user selected show listing and prompts the user for the listing id
@@ -130,32 +137,23 @@ const runCLI = async () => {
           return value.trim(); // Remove whitespace
         },
       });
-      const showListing = await Show_Listing(id); // Show the listing
-      if (!showListing) {
-        // If the listing is not found, display an error message
-        console.log(chalk.redBright("\nListing not found.\n"));
-        continue; // Skip showing the listing
+      try {
+        const show_data = await Show_Listing(id); // Show listing
+        Show_Data(show_data, "Listing found.");
+      } catch (error) {
+        Show_Error(`Unable to show listing. Error: ${error.message}`);
       }
-      console.log("\n"); // Add a new line for spacing
-      console.log(showListing); // Display the listing data
-      console.log("\n"); // Add a new line for spacing
     }
 
     // checks if user selected show listings and displays all the listings
     if (removeColor(command) === "Show listings") {
       console.log("\n"); // Add a new line for spacing
-      const showListings = await Show_Listings(); // Grabs all the listings from the collection
-      if (showListings===null) {
-        // If the listings are not found, display an error message
-        console.log(
-          chalk.redBright("\nUnable to find listing data. Error occurred!\n")
-        );
-        continue; // Skip showing the listings
+      try {
+        const show_data = await Show_Listings(); // Show all listings
+        Show_Data(show_data, `No. of listings: ${show_data.length}`);
+      } catch (error) {
+        Show_Error(`Unable to show listings. Error: ${error.message}`);
       }
-      console.log(showListings); // Display all the listings
-      console.log("\n"); // Add a new line for spacing
-      console.log(chalk.yellowBright("No. of listings: "), showListings.length); // Display the number of listings  in the collection
-      console.log("\n"); // Add a new line for spacing
     }
 
     // checks if user selected update listing and prompts the user for the listing id
@@ -168,31 +166,16 @@ const runCLI = async () => {
           return value.trim(); // Remove whitespace
         },
       });
-      const showListing = await Show_Listing(id); // Show the listing
-      if (!showListing) {
-        // If the listing is not found, display an error message
-        console.log(chalk.redBright("\nListing not found.\n"));
-        continue; // Skip showing the listing
+      try {
+        const show_data = await Show_Listing(id); // Show the listing to be updated
+        Show_Data(show_data, "Listing to be updated.");
+        console.log(chalk.yellowBright("Enter the updated data:"));
+        const answers = await inquirer.prompt(questions); // Prompt the user for updated data
+        const updated_data = await Update_Listing(id, answers); // Update the listing
+        Show_Data(updated_data, "Listing updated successfully!");
+      } catch (error) {
+        Show_Error(`Unable to update listing. Error: ${error.message}`);
       }
-      console.log("\nListing to be updated:\n"); // Display the listing to be updated
-      console.log(showListing); // Display the listing data
-      console.log("\n"); // Add a new line for spacing
-
-      console.log(chalk.yellowBright("Enter the new data:\n")); // Display message to enter updated data
-      const answers = await inquirer.prompt(questions); // Prompt the user for the updated data
-
-      const updatedListing = await Update_Listing(id, answers); // Update the listing
-      if (updatedListing===null) {
-        // If the listing is not found, display an error message
-        console.log(
-          chalk.redBright("\nUnable to update the listing. Error occurred!\n")
-        );
-        continue; // Skip updating the listing
-      }
-      console.log("\n"); // Add a new line for spacing
-      console.log(updatedListing); // Display the updated listing data
-      console.log("\n"); // Add a new line for spacing
-      console.log(chalk.yellowBright("Above listing updated successfully!\n")); // Display success message
     }
 
     // checks if user selected delete listing and prompts the user for the listing id
@@ -205,50 +188,52 @@ const runCLI = async () => {
           return value.trim(); // Remove whitespace
         },
       });
-      const deletedListing = await Delete_Listing(id); // Delete the listing
-      if (!deletedListing) {
-        // If the listing is not found, display an error message
-        console.log(chalk.redBright("\nListing not found.\n"));
-        continue; // Skip deleting the listing
+      try {
+        const show_data = await Show_Listing(id); // Show the listing to be deleted
+        Show_Data(show_data, "Listing to be deleted.");
+        const { isConfirmed } = await inquirer.prompt([ // Confirm deletion
+          {
+            type: "confirm",
+            name: "isConfirmed",
+            message: chalk.redBright(
+              "Are you sure you want to delete the listing?"
+            ),
+          },
+        ]);
+        if (isConfirmed) {
+          const delete_data = await Delete_Listing(id); // Delete the listing
+          Show_Data(delete_data, "Listing deleted.");
+        } else {
+          console.log(chalk.yellowBright("\nDeletion cancelled.\n"));
+        }
+      } catch (error) {
+        Show_Error(`Unable to delete listing. Error: ${error.message}`);
       }
-      console.log("\n"); // Add a new line for spacing
-      console.log(deletedListing); // Display the deleted listing data
-      console.log("\n"); // Add a new line for spacing
-      console.log(chalk.redBright("Above listing deleted successfully!\n")); // Display success message
     }
 
-    // checks if user selected delete all listings and deletes all the listings
-    if (removeColor(command) === "Delete all listings") {
-      console.log("\n"); // Add a new line for spacing
-      const { isConfirmed } = await inquirer.prompt({
-        type: "confirm",
-        name: "isConfirmed",
-        message: chalk.redBright(
-          "Are you sure you want to delete all listings?"
-        ), // Confirmation message
-        default: false, // Default value is false
-      });
-      if (!isConfirmed) {
-        // If the user does not confirm, skip deleting all listings
-        console.log(
-          chalk.yellowBright("\nDelete all listings, cancelled.\n\n")
-        );
-        continue;
+      // checks if user selected delete all listings and deletes all the listings
+      if (removeColor(command) === "Delete all listings") {
+        try {
+          const { isConfirmed } = await inquirer.prompt([ // Confirm deletion
+            {
+              type: "confirm",
+              name: "isConfirmed",
+              message: chalk.redBright(
+                "Are you sure you want to delete all listings?"
+              ),
+            },
+          ]);
+          if (isConfirmed) {
+            const delete_all_data = await Delete_All_Listings(); // Delete all listings
+            Show_Data(delete_all_data, `Deleted All listings.`);
+          } else {
+            console.log(chalk.yellowBright("\nDeletion cancelled.\n"));
+          }
+        } catch (error) {
+          Show_Error(`Unable to delete listings. Error: ${error.message}`);
+        }
       }
-      const deletedListings = await Delete_All_Listings(); // Delete all the listings
-      if (deletedListings===null) {
-        // If the listings are not found, display an error message
-        console.log(
-          chalk.redBright("\nUnable to delete all listings. Error occurred!\n")
-        );
-        continue; // Skip deleting all the listings
-      }
-      console.log("\n"); // Add a new line for spacing
-      console.log(deletedListings); // Display the deleted listings data
-      console.log("\n"); // Add a new line for spacing
-      Seed_Data_Added = false; // Reset the seed data added
     }
-  }
-};
+  };
 
-runCLI(); // Run the CLI
+  runCLI(); // Run the CLI
