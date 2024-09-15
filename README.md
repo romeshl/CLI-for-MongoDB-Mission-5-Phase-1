@@ -5,6 +5,15 @@ This app was built as the **Task 5** of **Mission 5 - Phase 1** at **Mission Rea
 ### Objective of the task
 Develop a command-line interface (CLI) tool to seed data into your local MongoDB database or delete data from it.  Ensure that this tool is source-controlled and includes the seed data.  Team members should be able to seed data by cloning the repository.  Add sample data for a few auction items with the following 4 fields: title, description, start_price, reserve_price.
 
+### Database details
+
+* MongoDB database named **Trademe**
+* Colleciton is named **Listings**.
+* Fields in the **Listings** collection are: 
+```
+{ title: text, description: text, start_price: number, reserve_price: number}
+```
+
 ### Approach
 After playing a bit with [readline](https://www.npmjs.com/package/readline0), [commander](https://www.npmjs.com/package/commander) and inquirer, I decided to go with inquirer for handling user inputs.
 
@@ -36,7 +45,7 @@ After playing a bit with [readline](https://www.npmjs.com/package/readline0), [c
 **trademe.listings.json** - This file contains the seed data to be added to an empty database.
 
 
-## Instructions
+# Instructions
 
 Use the following command to clone the repository. 
 ``` 
